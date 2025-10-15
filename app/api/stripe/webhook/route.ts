@@ -81,24 +81,6 @@ export async function POST(request: Request) {
             })
             .eq('id', profile.id)
 
-          // Create/update subscription record
-          await supabaseAdmin
-            .from('subscriptions')
-            .upsert({
-              user_id: profile.id,
-              stripe_customer_id: customerId,
-              stripe_subscription_id: subscription.id,
-              stripe_price_id: subscription.items.data[0].price.id,
-              status,
-              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-              cancel_at_period_end: subscription.cancel_at_period_end,
-              canceled_at: subscription.canceled_at
-                ? new Date(subscription.canceled_at * 1000).toISOString()
-                : null,
-              updated_at: new Date().toISOString(),
-            })
-
           console.log(`✅ Subscription updated for user ${profile.id}: ${status}`)
         }
         break
@@ -125,16 +107,6 @@ export async function POST(request: Request) {
               subscription_end_date: new Date().toISOString(),
             })
             .eq('id', profile.id)
-
-          // Update subscription record
-          await supabaseAdmin
-            .from('subscriptions')
-            .update({
-              status: 'canceled',
-              canceled_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            })
-            .eq('stripe_subscription_id', subscription.id)
 
           console.log(`✅ User ${profile.id} downgraded to Free`)
         }
