@@ -86,6 +86,79 @@ export function InstagramUpdateCard({ update, currentUserId }: InstagramUpdateCa
         </button>
       </div>
 
+      {/* 🔥 INDIE HACKER FEATURES 🔥 */}
+      <div className="px-4 pb-3 space-y-2">
+        {/* Building Streak - 연속 업데이트 일수 */}
+        {update.day_number && (
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🔥</span>
+            <span className="text-sm font-semibold text-orange-600">
+              Day {update.day_number} streak!
+            </span>
+          </div>
+        )}
+
+        {/* Project Progress Bar - 프로젝트 진행도 */}
+        {projectStage && (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-600">Project Progress</span>
+              <span className="font-semibold text-purple-600">
+                {projectStage === 'idea' && '0%'}
+                {projectStage === 'planning' && '10%'}
+                {projectStage === 'building' && '40%'}
+                {projectStage === 'beta' && '70%'}
+                {projectStage === 'launched' && '85%'}
+                {projectStage === 'growing' && '90%'}
+                {projectStage === 'profitable' && '100%'}
+                {projectStage === 'acquired' && '100%'}
+                {projectStage === 'shutdown' && '0%'}
+              </span>
+            </div>
+            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
+                style={{
+                  width:
+                    projectStage === 'idea' ? '5%' :
+                    projectStage === 'planning' ? '15%' :
+                    projectStage === 'building' ? '45%' :
+                    projectStage === 'beta' ? '70%' :
+                    projectStage === 'launched' ? '85%' :
+                    projectStage === 'growing' ? '92%' :
+                    projectStage === 'profitable' ? '100%' :
+                    projectStage === 'acquired' ? '100%' : '5%'
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Metrics Widget - 실시간 메트릭 */}
+        {(update.time_spent || update.mood) && (
+          <div className="flex items-center gap-3 text-xs">
+            {update.time_spent && (
+              <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded-full">
+                <span>⏱️</span>
+                <span className="font-medium text-blue-700">{update.time_spent}min</span>
+              </div>
+            )}
+            {update.mood && (
+              <div className="flex items-center gap-1 px-2 py-1 bg-yellow-50 rounded-full">
+                <span>
+                  {update.mood === 'happy' && '😊'}
+                  {update.mood === 'neutral' && '😐'}
+                  {update.mood === 'tired' && '😴'}
+                  {update.mood === 'frustrated' && '😤'}
+                  {update.mood === 'excited' && '🤩'}
+                </span>
+                <span className="font-medium text-yellow-700 capitalize">{update.mood}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Image - Instagram style */}
       {update.image_url && (
         <div className="w-full aspect-square bg-gray-100">
