@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { NotificationBell } from './notification-bell'
 import { Button } from './ui/button'
-import { useState } from 'react'
+import { useState, useCallback, memo } from 'react'
 
 interface NavItem {
   name: string
@@ -19,9 +19,35 @@ const navItems: NavItem[] = [
   { name: 'Search', href: '/search', icon: '🔍' },
 ]
 
+const NavButton = memo(({ item, isActive, onClick }: { item: NavItem; isActive: boolean; onClick?: () => void }) => (
+  <Link key={item.href} href={item.href}>
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+        isActive
+          ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md'
+          : 'text-gray-600 hover:bg-gray-100 hover:text-purple-600'
+      }`}
+    >
+      <span>{item.icon}</span>
+      <span>{item.name}</span>
+    </button>
+  </Link>
+))
+
+NavButton.displayName = 'NavButton'
+
 export function Navbar() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev)
+  }, [])
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false)
+  }, [])
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
@@ -36,23 +62,9 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link key={item.href} href={item.href}>
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
-                      isActive
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-purple-600'
-                    }`}
-                  >
-                    <span>{item.icon}</span>
-                    <span>{item.name}</span>
-                  </button>
-                </Link>
-              )
-            })}
+            {navItems.map((item) => (
+              <NavButton key={item.href} item={item} isActive={pathname === item.href} />
+            ))}
           </div>
 
           {/* Right Side Actions */}
@@ -71,7 +83,7 @@ export function Navbar() {
 
             {/* Mobile menu button */}
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={toggleMobileMenu}
               className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <svg
@@ -103,28 +115,15 @@ export function Navbar() {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 space-y-2 animate-in slide-in-from-top">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link key={item.href} href={item.href}>
-                  <button
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`w-full px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-3 ${
-                      isActive
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                  >
-                    <span className="text-xl">{item.icon}</span>
-                    <span>{item.name}</span>
-                  </button>
-                </Link>
-              )
-            })}
+            {navItems.map((item) => (
+              <div key={item.href} className="w-full">
+                <NavButton item={item} isActive={pathname === item.href} onClick={closeMobileMenu} />
+              </div>
+            ))}
             <div className="pt-2 border-t border-gray-200 space-y-2">
               <Link href="/settings">
                 <button
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={closeMobileMenu}
                   className="w-full px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 transition-all flex items-center gap-3"
                 >
                   <span className="text-xl">⚙️</span>

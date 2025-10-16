@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { memo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface StatCardProps {
@@ -13,7 +13,7 @@ interface StatCardProps {
   delay?: number
 }
 
-export function StatCard({
+export const StatCard = memo(function StatCard({
   title,
   description,
   value,
@@ -22,46 +22,13 @@ export function StatCard({
   icon,
   delay = 0
 }: StatCardProps) {
-  const [count, setCount] = useState(0)
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    // Trigger animation after delay
-    const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, delay)
-
-    return () => clearTimeout(timer)
-  }, [delay])
-
-  useEffect(() => {
-    if (!isVisible) return
-
-    // Animate counter from 0 to value
-    const duration = 1000 // 1 second
-    const steps = 30
-    const increment = value / steps
-    const stepDuration = duration / steps
-
-    let currentStep = 0
-    const timer = setInterval(() => {
-      currentStep++
-      if (currentStep === steps) {
-        setCount(value)
-        clearInterval(timer)
-      } else {
-        setCount(Math.floor(increment * currentStep))
-      }
-    }, stepDuration)
-
-    return () => clearInterval(timer)
-  }, [value, isVisible])
-
   return (
     <Card
-      className={`transition-all duration-500 hover:shadow-lg hover:-translate-y-1 ${className} ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
+      className={`transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${className}`}
+      style={{
+        animation: `fadeInUp 0.4s ease-out ${delay}ms forwards`,
+        opacity: 0
+      }}
     >
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -72,10 +39,10 @@ export function StatCard({
       </CardHeader>
       <CardContent>
         <p className="text-3xl font-bold">
-          {count}
+          {value}
           {suffix}
         </p>
       </CardContent>
     </Card>
   )
-}
+})
