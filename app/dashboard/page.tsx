@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { NotificationBell } from '@/components/notification-bell'
 import { getStreakEmoji } from '@/lib/streak'
+import { StatCard } from '@/components/stat-card'
 import Link from 'next/link'
 
 export default async function DashboardPage() {
@@ -33,6 +34,14 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
+  // Get recent updates
+  const { data: recentUpdates } = await supabase
+    .from('updates')
+    .select('*, projects(title)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(5)
+
   // Get project count
   const projectCount = projects?.length || 0
 
@@ -52,7 +61,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-      <div className="max-w-7xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Streak Banner */}
         {!updatedToday && currentStreak > 0 && (
           <div className="mb-6 p-4 bg-gradient-to-r from-orange-100 to-red-100 border-2 border-orange-300 rounded-lg">
@@ -90,78 +99,78 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Dashboard
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-600 mt-2 text-sm sm:text-base">
               Welcome back, {profile?.display_name || user.email}!
             </p>
           </div>
-          <div className="flex gap-3 items-center">
+          <div className="flex flex-wrap gap-2 sm:gap-3 items-center w-full lg:w-auto">
             <NotificationBell />
-            <Link href="/feed">
-              <Button variant="outline">🌍 Community</Button>
+            <Link href="/feed" className="flex-1 sm:flex-none">
+              <Button variant="outline" className="w-full sm:w-auto">
+                <span className="hidden sm:inline">🌍 Community</span>
+                <span className="sm:hidden">🌍</span>
+              </Button>
             </Link>
-            <Link href="/projects/new">
-              <Button>+ New Project</Button>
+            <Link href="/projects/new" className="flex-1 sm:flex-none">
+              <Button className="w-full sm:w-auto">
+                <span className="hidden sm:inline">+ New Project</span>
+                <span className="sm:hidden">+</span>
+              </Button>
             </Link>
-            <Link href="/settings">
-              <Button variant="outline">⚙️ Settings</Button>
+            <Link href="/settings" className="flex-1 sm:flex-none">
+              <Button variant="outline" className="w-full sm:w-auto">
+                <span className="hidden sm:inline">⚙️ Settings</span>
+                <span className="sm:hidden">⚙️</span>
+              </Button>
             </Link>
-            <form action="/auth/signout" method="post">
-              <Button variant="outline">Sign out</Button>
+            <form action="/auth/signout" method="post" className="flex-1 sm:flex-none">
+              <Button variant="outline" className="w-full sm:w-auto">
+                <span className="hidden sm:inline">Sign out</span>
+                <span className="sm:hidden">👋</span>
+              </Button>
             </form>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Projects</CardTitle>
-              <CardDescription>Your active projects</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{projectCount}</p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          <StatCard
+            title="Projects"
+            description="Your active projects"
+            value={projectCount}
+            icon={<span className="text-xl">📁</span>}
+            delay={0}
+          />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Updates</CardTitle>
-              <CardDescription>Total updates posted</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{updatesCount || 0}</p>
-            </CardContent>
-          </Card>
+          <StatCard
+            title="Updates"
+            description="Total updates posted"
+            value={updatesCount || 0}
+            icon={<span className="text-xl">📝</span>}
+            delay={100}
+          />
 
-          <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-red-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span>{streakEmoji}</span>
-                Current Streak
-              </CardTitle>
-              <CardDescription>Consecutive days</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-orange-600">{currentStreak}</p>
-              {longestStreak > currentStreak && (
-                <p className="text-sm text-gray-600 mt-1">Best: {longestStreak} days</p>
-              )}
-            </CardContent>
-          </Card>
+          <StatCard
+            title="Current Streak"
+            description="Consecutive days"
+            value={currentStreak}
+            suffix={currentStreak === 1 ? ' day' : ' days'}
+            icon={<span>{streakEmoji}</span>}
+            className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-red-50"
+            delay={200}
+          />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Followers</CardTitle>
-              <CardDescription>People following you</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">0</p>
-            </CardContent>
-          </Card>
+          <StatCard
+            title="Followers"
+            description="People following you"
+            value={0}
+            icon={<span className="text-xl">👥</span>}
+            delay={300}
+          />
         </div>
 
         {/* Pro Status Card for Pro users */}
@@ -251,45 +260,91 @@ export default async function DashboardPage() {
           </Card>
         )}
 
-        {/* Projects List */}
-        {projects && projects.length > 0 && (
-          <Card className="mb-8">
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
+          {/* Projects List */}
+          {projects && projects.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Projects</CardTitle>
+                <CardDescription>Manage your active projects</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {projects.slice(0, 3).map((project) => (
+                    <Link key={project.id} href={`/projects/${project.id}`}>
+                      <div className="p-3 border rounded-lg hover:bg-gray-50 transition-all hover:shadow-md cursor-pointer">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h3 className="font-semibold">{project.title}</h3>
+                            {project.description && (
+                              <p className="text-gray-600 text-sm mt-1 line-clamp-1">{project.description}</p>
+                            )}
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ml-2 flex-shrink-0 ${
+                            project.status === 'active'
+                              ? 'bg-green-100 text-green-700'
+                              : project.status === 'paused'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {project.status}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                  {projects.length > 3 && (
+                    <Link href="/projects">
+                      <Button variant="outline" className="w-full">
+                        View all {projects.length} projects →
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Recent Updates Timeline */}
+          <Card>
             <CardHeader>
-              <CardTitle>Your Projects</CardTitle>
-              <CardDescription>Manage your active projects</CardDescription>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Your latest updates</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {projects.map((project) => (
-                  <Link key={project.id} href={`/projects/${project.id}`}>
-                    <div className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-semibold text-lg">{project.title}</h3>
-                          {project.description && (
-                            <p className="text-gray-600 text-sm mt-1">{project.description}</p>
-                          )}
-                          {project.goal && (
-                            <p className="text-purple-600 text-sm mt-2">🎯 {project.goal}</p>
-                          )}
-                        </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          project.status === 'active'
-                            ? 'bg-green-100 text-green-700'
-                            : project.status === 'paused'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-gray-100 text-gray-700'
-                        }`}>
-                          {project.status}
-                        </span>
+              {recentUpdates && recentUpdates.length > 0 ? (
+                <div className="space-y-4">
+                  {recentUpdates.map((update: any) => (
+                    <div key={update.id} className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                        <div className="w-0.5 h-full bg-purple-200"></div>
+                      </div>
+                      <div className="flex-1 pb-4">
+                        <p className="text-sm font-medium text-gray-900">{update.content}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {update.projects?.title} • {new Date(update.created_at).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
+                  ))}
+                  <Link href="/feed">
+                    <Button variant="outline" className="w-full">
+                      View all activity →
+                    </Button>
                   </Link>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 text-sm mb-4">No updates yet</p>
+                  <Link href="/projects/new">
+                    <Button>Post your first update</Button>
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
-        )}
+        </div>
 
         <Card>
           <CardHeader>
