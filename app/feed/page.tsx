@@ -4,8 +4,13 @@ import { UpdateCard } from '@/components/update-card'
 import { Navbar } from '@/components/navbar'
 import { FeedFilters } from '@/components/feed-filters'
 
-export default async function FeedPage() {
+export default async function FeedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const supabase = await createClient()
+  const params = await searchParams
 
   const {
     data: { user },
@@ -15,8 +20,14 @@ export default async function FeedPage() {
     redirect('/login')
   }
 
-  // Get public updates from all users with likes and new specialized fields
-  const { data: updates } = await supabase
+  // Extract filter parameters
+  const updateType = params.update_type as string | undefined
+  const category = params.category as string | undefined
+  const stage = params.stage as string | undefined
+  const tag = params.tag as string | undefined
+
+  // Build query with filters
+  let query = supabase
     .from('updates')
     .select(`
       *,
@@ -25,8 +36,31 @@ export default async function FeedPage() {
       likes(user_id)
     `)
     .eq('is_public', true)
+
+  // Apply update type filter
+  if (updateType) {
+    query = query.eq('update_type', updateType)
+  }
+
+  // Apply tag filter
+  if (tag) {
+    query = query.contains('tags', [tag])
+  }
+
+  const { data: allUpdates } = await query
     .order('created_at', { ascending: false })
     .limit(50)
+
+  // Client-side filtering for category and stage (since they're in related table)
+  let updates = allUpdates || []
+
+  if (category) {
+    updates = updates.filter((update: any) => update.project?.category === category)
+  }
+
+  if (stage) {
+    updates = updates.filter((update: any) => update.project?.stage === stage)
+  }
 
   return (
     <>

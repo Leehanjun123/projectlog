@@ -1,15 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PROJECT_CATEGORIES, PROJECT_STAGES, UPDATE_TYPES } from '@/lib/types/specialization'
 import type { ProjectCategory, ProjectStage, UpdateType } from '@/lib/types/specialization'
 
 export function FeedFilters() {
-  const [selectedUpdateType, setSelectedUpdateType] = useState<UpdateType | null>(null)
-  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | null>(null)
-  const [selectedStage, setSelectedStage] = useState<ProjectStage | null>(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const selectedUpdateType = searchParams.get('update_type') as UpdateType | null
+  const selectedCategory = searchParams.get('category') as ProjectCategory | null
+  const selectedStage = searchParams.get('stage') as ProjectStage | null
+
+  const updateFilter = (key: string, value: string | null) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (value) {
+      params.set(key, value)
+    } else {
+      params.delete(key)
+    }
+
+    router.push(`/feed?${params.toString()}`)
+  }
 
   return (
     <div className="space-y-4 sticky top-20">
@@ -26,7 +41,7 @@ export function FeedFilters() {
             variant={selectedUpdateType === null ? 'default' : 'ghost'}
             size="sm"
             className="w-full justify-start text-xs"
-            onClick={() => setSelectedUpdateType(null)}
+            onClick={() => updateFilter('update_type', null)}
           >
             All Updates
           </Button>
@@ -36,7 +51,7 @@ export function FeedFilters() {
               variant={selectedUpdateType === key ? 'default' : 'ghost'}
               size="sm"
               className="w-full justify-start text-xs"
-              onClick={() => setSelectedUpdateType(key as UpdateType)}
+              onClick={() => updateFilter('update_type', key)}
             >
               <span className="mr-2">{value.icon}</span>
               {value.label}
@@ -58,7 +73,7 @@ export function FeedFilters() {
             variant={selectedCategory === null ? 'default' : 'ghost'}
             size="sm"
             className="w-full justify-start text-xs"
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => updateFilter('category', null)}
           >
             All Categories
           </Button>
@@ -68,7 +83,7 @@ export function FeedFilters() {
               variant={selectedCategory === key ? 'default' : 'ghost'}
               size="sm"
               className="w-full justify-start text-xs"
-              onClick={() => setSelectedCategory(key as ProjectCategory)}
+              onClick={() => updateFilter('category', key)}
             >
               <span className="mr-2">{value.icon}</span>
               {value.label}
@@ -90,7 +105,7 @@ export function FeedFilters() {
             variant={selectedStage === null ? 'default' : 'ghost'}
             size="sm"
             className="w-full justify-start text-xs"
-            onClick={() => setSelectedStage(null)}
+            onClick={() => updateFilter('stage', null)}
           >
             All Stages
           </Button>
@@ -100,7 +115,7 @@ export function FeedFilters() {
               variant={selectedStage === key ? 'default' : 'ghost'}
               size="sm"
               className="w-full justify-start text-xs"
-              onClick={() => setSelectedStage(key as ProjectStage)}
+              onClick={() => updateFilter('stage', key)}
             >
               <span className="mr-2">{value.icon}</span>
               {value.label}
@@ -123,6 +138,7 @@ export function FeedFilters() {
               <button
                 key={tag}
                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-purple-50 transition-colors group"
+                onClick={() => updateFilter('tag', tag)}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-purple-600 group-hover:text-purple-700 font-medium">
