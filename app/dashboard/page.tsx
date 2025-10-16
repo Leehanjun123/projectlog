@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { NotificationBell } from '@/components/notification-bell'
+import { Navbar } from '@/components/navbar'
 import { getStreakEmoji } from '@/lib/streak'
 import { StatCard } from '@/components/stat-card'
 import Link from 'next/link'
@@ -60,11 +60,13 @@ export default async function DashboardPage() {
   const updatedToday = profile?.last_update_date === today
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Streak Banner */}
-        {!updatedToday && currentStreak > 0 && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-orange-100 to-red-100 border-2 border-orange-300 rounded-lg">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          {/* Streak Banner */}
+          {!updatedToday && currentStreak > 0 && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-orange-100 to-red-100 border-2 border-orange-300 rounded-lg animate-in slide-in-from-top duration-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-orange-900">
@@ -84,9 +86,9 @@ export default async function DashboardPage() {
         )}
 
         {updatedToday && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-green-100 to-blue-100 border-2 border-green-300 rounded-lg">
+          <div className="mb-6 p-4 bg-gradient-to-r from-green-100 to-blue-100 border-2 border-green-300 rounded-lg animate-in slide-in-from-top duration-500">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">{streakEmoji}</span>
+              <span className="text-3xl animate-bounce">{streakEmoji}</span>
               <div>
                 <p className="font-semibold text-green-900">
                   Great job! You've posted today!
@@ -99,42 +101,13 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Dashboard
-            </h1>
-            <p className="text-gray-600 mt-2 text-sm sm:text-base">
-              Welcome back, {profile?.display_name || user.email}!
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 sm:gap-3 items-center w-full lg:w-auto">
-            <NotificationBell />
-            <Link href="/feed" className="flex-1 sm:flex-none">
-              <Button variant="outline" className="w-full sm:w-auto">
-                <span className="hidden sm:inline">🌍 Community</span>
-                <span className="sm:hidden">🌍</span>
-              </Button>
-            </Link>
-            <Link href="/projects/new" className="flex-1 sm:flex-none">
-              <Button className="w-full sm:w-auto">
-                <span className="hidden sm:inline">+ New Project</span>
-                <span className="sm:hidden">+</span>
-              </Button>
-            </Link>
-            <Link href="/settings" className="flex-1 sm:flex-none">
-              <Button variant="outline" className="w-full sm:w-auto">
-                <span className="hidden sm:inline">⚙️ Settings</span>
-                <span className="sm:hidden">⚙️</span>
-              </Button>
-            </Link>
-            <form action="/auth/signout" method="post" className="flex-1 sm:flex-none">
-              <Button variant="outline" className="w-full sm:w-auto">
-                <span className="hidden sm:inline">Sign out</span>
-                <span className="sm:hidden">👋</span>
-              </Button>
-            </form>
-          </div>
+        <div className="mb-8 animate-in fade-in slide-in-from-top duration-700">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent animate-gradient">
+            Welcome back, {profile?.display_name || user.email?.split('@')[0]}!
+          </h1>
+          <p className="text-gray-600 mt-2 text-sm sm:text-base">
+            Here's what's happening with your projects
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
@@ -175,7 +148,7 @@ export default async function DashboardPage() {
 
         {/* Pro Status Card for Pro users */}
         {isPro && (
-          <Card className="mb-8 bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300">
+          <Card className="mb-8 bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300 animate-in fade-in slide-in-from-left duration-700 hover:shadow-xl transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 ⭐ Pro Member
@@ -223,7 +196,7 @@ export default async function DashboardPage() {
 
         {/* Upgrade CTA for Free users */}
         {!isPro && (
-          <Card className="mb-8 bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300">
+          <Card className="mb-8 bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300 animate-in fade-in slide-in-from-left duration-700 hover:shadow-xl hover:scale-105 transition-all">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 ⭐ Upgrade to Pro
@@ -263,7 +236,7 @@ export default async function DashboardPage() {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Projects List */}
           {projects && projects.length > 0 && (
-            <Card>
+            <Card className="animate-in fade-in slide-in-from-bottom duration-700 hover:shadow-xl transition-shadow">
               <CardHeader>
                 <CardTitle>Your Projects</CardTitle>
                 <CardDescription>Manage your active projects</CardDescription>
@@ -272,7 +245,7 @@ export default async function DashboardPage() {
                 <div className="space-y-3">
                   {projects.slice(0, 3).map((project) => (
                     <Link key={project.id} href={`/projects/${project.id}`}>
-                      <div className="p-3 border rounded-lg hover:bg-gray-50 transition-all hover:shadow-md cursor-pointer">
+                      <div className="p-3 border rounded-lg hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all hover:shadow-lg hover:scale-105 cursor-pointer group">
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
                             <h3 className="font-semibold">{project.title}</h3>
@@ -306,7 +279,7 @@ export default async function DashboardPage() {
           )}
 
           {/* Recent Updates Timeline */}
-          <Card>
+          <Card className="animate-in fade-in slide-in-from-bottom duration-700 delay-150 hover:shadow-xl transition-shadow">
             <CardHeader>
               <CardTitle>Recent Activity</CardTitle>
               <CardDescription>Your latest updates</CardDescription>
@@ -346,14 +319,14 @@ export default async function DashboardPage() {
           </Card>
         </div>
 
-        <Card>
+        <Card className="animate-in fade-in slide-in-from-bottom duration-700 delay-300 hover:shadow-xl transition-shadow">
           <CardHeader>
             <CardTitle>Quick Start</CardTitle>
             <CardDescription>Get started with ProjectLog</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="bg-purple-100 p-3 rounded-full">
+            <div className="flex items-start gap-4 group hover:translate-x-2 transition-transform">
+              <div className="bg-purple-100 p-3 rounded-full group-hover:scale-110 transition-transform">
                 <span className="text-2xl">📝</span>
               </div>
               <div>
@@ -363,8 +336,8 @@ export default async function DashboardPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-blue-100 p-3 rounded-full">
+            <div className="flex items-start gap-4 group hover:translate-x-2 transition-transform">
+              <div className="bg-blue-100 p-3 rounded-full group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🚀</span>
               </div>
               <div>
@@ -374,8 +347,8 @@ export default async function DashboardPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-green-100 p-3 rounded-full">
+            <div className="flex items-start gap-4 group hover:translate-x-2 transition-transform">
+              <div className="bg-green-100 p-3 rounded-full group-hover:scale-110 transition-transform">
                 <span className="text-2xl">👥</span>
               </div>
               <div>
@@ -389,5 +362,6 @@ export default async function DashboardPage() {
         </Card>
       </div>
     </div>
+    </>
   )
 }
