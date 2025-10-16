@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { UpdateCard } from '@/components/update-card'
+import { InstagramUpdateCard } from '@/components/instagram-update-card'
 import { Navbar } from '@/components/navbar'
 import { FeedFilters } from '@/components/feed-filters'
 
@@ -65,55 +65,42 @@ export default async function FeedPage({
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
-        {/* Hero Section - Instagram Story Style */}
-        <div className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-5xl mx-auto px-4 py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
-                  🌟 Community Feed
-                </h1>
-                <p className="text-gray-600 text-sm mt-1">
-                  {updates?.length || 0} builders sharing their journey
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-5xl mx-auto px-4 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Left Sidebar - Filters (Instagram style) */}
-            <div className="lg:col-span-1">
-              <FeedFilters />
-            </div>
-
-            {/* Main Feed - Twitter/Instagram hybrid */}
-            <div className="lg:col-span-3">
+      {/* Instagram-style layout */}
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-[935px] mx-auto pt-8 px-4">
+          <div className="flex gap-8">
+            {/* Main Feed - Instagram center column */}
+            <div className="flex-1 max-w-[614px]">
               {updates && updates.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {updates.map((update) => (
-                    <UpdateCard key={update.id} update={update} currentUserId={user.id} />
+                    <InstagramUpdateCard key={update.id} update={update} currentUserId={user.id} />
                   ))}
                 </div>
               ) : (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                  <div className="text-6xl mb-4">👋</div>
+                <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+                  <div className="text-6xl mb-4">📸</div>
                   <h3 className="text-xl font-bold text-gray-800 mb-2">
-                    No updates yet
+                    No posts yet
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Be the first to share your journey with the community!
+                    Start sharing your journey with the community!
                   </p>
                   <a
                     href="/dashboard"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-full hover:shadow-lg transition-all duration-200"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors"
                   >
-                    ✨ Start Building
+                    Create Post
                   </a>
                 </div>
               )}
+            </div>
+
+            {/* Right Sidebar - Instagram style */}
+            <div className="hidden lg:block w-[320px]">
+              <div className="sticky top-20">
+                <FeedFilters />
+              </div>
             </div>
           </div>
         </div>
