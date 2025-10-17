@@ -35,16 +35,16 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Features */}
+        {/* Features - Phase 1 핵심 가치 */}
         <div className="grid md:grid-cols-3 gap-8 mb-20">
           <Card className="border-2 hover:border-purple-200 transition-all hover:shadow-lg">
             <CardHeader>
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                <span className="text-3xl">📝</span>
+                <span className="text-3xl">🚀</span>
               </div>
-              <CardTitle className="text-xl">Daily Progress Tracking</CardTitle>
+              <CardTitle className="text-xl">Your PROJECT is the Star</CardTitle>
               <CardDescription className="text-base">
-                Log your wins, challenges, and learnings. Track day numbers and time spent. See your journey unfold.
+                Unlike Twitter or Instagram, your project gets its own page. Track the complete journey from Day 1 to launch.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -52,11 +52,11 @@ export default function Home() {
           <Card className="border-2 hover:border-blue-200 transition-all hover:shadow-lg">
             <CardHeader>
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                <span className="text-3xl">🌍</span>
+                <span className="text-3xl">📊</span>
               </div>
-              <CardTitle className="text-xl">Build in Public</CardTitle>
+              <CardTitle className="text-xl">Visual Progress Tracking</CardTitle>
               <CardDescription className="text-base">
-                Share your process transparently. Get real feedback. Inspire others with your journey.
+                See your progress with beautiful bars. Stage badges (Idea → Building → Launched). Day streaks to keep you motivated.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -64,11 +64,11 @@ export default function Home() {
           <Card className="border-2 hover:border-indigo-200 transition-all hover:shadow-lg">
             <CardHeader>
               <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
-                <span className="text-3xl">👥</span>
+                <span className="text-3xl">📖</span>
               </div>
-              <CardTitle className="text-xl">Real Community</CardTitle>
+              <CardTitle className="text-xl">Building Journey Timeline</CardTitle>
               <CardDescription className="text-base">
-                Follow builders you admire. Get support when stuck. Celebrate wins together.
+                Every update in chronological order. Your entire story in one place. No more scattered tweets.
               </CardDescription>
             </CardHeader>
           </Card>

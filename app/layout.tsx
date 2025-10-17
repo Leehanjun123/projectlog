@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { FeedbackButton } from '@/components/feedback-button'
 
 export const metadata: Metadata = {
   title: 'ProjectLog - Build in Public Platform',
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
+        <FeedbackButton />
       </body>
     </html>
   )
